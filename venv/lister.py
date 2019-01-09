@@ -47,6 +47,8 @@ class ListInherited:
             else:
                 result += '\tname %s=%s\n' % (attr, getattr(self, attr))
         return result
+
+
 class ListTree:
     """
     Примесный класс, в котором метод __str__ просматривает все дерево классов
@@ -57,15 +59,17 @@ class ListTree:
     использует выражение-генератор; чтобы сделать подстановку значений более
     очевидной, использует метод str.format()
     """
+
     def __str__(self):
         self.__visited = {}
         return '<Instance of {0}, address {1}:\n{2}{3}>'.format(
             self.__class__.__name__,
             id(self),
-            self.__attrnames(self,0),
-            self.__listclass(self.__class__,4))
+            self.__attrnames(self, 0),
+            self.__listclass(self.__class__, 4))
+
     def __listclass(self, aClass, indent):
-        dots='.'*indent
+        dots = '.' * indent
         if aClass in self.__visited:
             return '\n{0}<Class {1}:, address {2}: (see above)>\n'.format(
                 dots,
@@ -73,7 +77,7 @@ class ListTree:
                 id(aClass))
         else:
             self.__visited[aClass] = True
-            genabove = (self.__listclass(c,indent+4)
+            genabove = (self.__listclass(c, indent + 4)
                         for c in aClass.__bases__)
             return '\n{0}<Class {1}, address {2}:\n{3}{4}{5}>\n'.format(
                 dots,
@@ -82,12 +86,36 @@ class ListTree:
                 self.__attrnames(aClass, indent),
                 ''.join(genabove),
                 dots)
-    def __attrnames(self,obj,indent):
-        spaces=' '*(indent+4)
-        result=''
+
+    def __attrnames(self, obj, indent):
+        spaces = ' ' * (indent + 4)
+        result = ''
         for attr in sorted(obj.__dict__):
             if attr.startswith('__') and attr.endswith('__'):
-                result+=spaces+'{0}=<>\n'.format(attr)
+                result += spaces + '{0}=<>\n'.format(attr)
             else:
-                result+=spaces+'{0}={1}\n'.format(attr,getattr(obj,attr))
+                result += spaces + '{0}={1}\n'.format(attr, getattr(obj, attr))
         return result
+
+
+if __name__ == '__main__':
+    class Super:
+        def __init__(self):
+            self.data = 'spam'
+
+        def ham(self):
+            pass
+
+
+    class Sub(Super, ListTree):
+        def __init__(self):
+            Super.__init__(self)
+            self.data2 = 'eggs'
+            self.data3 = 42
+
+        def spam(self):
+            pass
+
+
+    x = Sub()
+    print(x)
