@@ -36,3 +36,5 @@ if __name__=='__main__':
     x=Set([1,2,5,7])
     print(x.union(Set([1,4,7])))
     print(x|Set([1,4,6]))
+    print(x)
+
